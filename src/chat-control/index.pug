@@ -1,0 +1,104 @@
+script(type="text/x-template" id="control-ajax")
+  .ajax(v-if="isShown === true")
+    control-icon(:icon="'ajax'", :classes="'fa-spin fa-3x fa-fw'")
+
+script(type="text/x-template" id="control-icon")
+  i(:class="iconclass")
+
+script(type="text/x-template" id="control-chat-panel")
+  .chat-panel(:class="{'expanded': isExpanded}")
+    .header(@click="expand")
+      button.menu.wobbler(@click="$root.wobble")
+        control-icon(:icon="'menu'")
+      span.title {{ title }}
+    .search
+      input(type="text", placeholder="Search...", v-model="searchInput")
+      control-icon.icon(:icon="'search'")
+    .content(:ref="'content'")
+      control-ajax(v-if="isLoaded === false", :ref="'ajax'")
+      ul.user-list
+        chat-user(v-for="(user, index) in filteredUsers", :key="index" :userdata="user", :index="index")
+    button.compose.wobbler(@click="$root.wobble")
+      control-icon.icon(:icon="'compose'")
+
+script(type="text/x-template" id="control-chat-user")
+  li.chat-user(@click="chatUser(index)", :class="{'offline': userdata.status === 0, 'online': userdata.status === 1, 'away': userdata.status === 2, }")
+    .photo-container
+      .photo
+        img(:src="userdata.photo")
+    .username {{ userdata.username}}
+    .last-message
+      .sender You:&nbsp;
+      | lorem ipsum dolor sit amet
+    .notifications(:class="{'show': Math.ceil(Math.random() * 10) % 2 }")
+      .text {{ Math.ceil(Math.random() * 10) }}
+
+script(type="text/x-template" id="control-chat-window")
+  .chat-window(:class="{'expanded': isExpanded}", :ref="'index-' + index")
+    .header(@click="expand")
+      .name {{ usersInChat }}
+      .close(@click="closeChat")
+        control-icon.icon(:icon="'close'")
+    .body(:ref="'chat'")
+      ul.chat
+        li.line(v-if="chatdata", v-for="(hist, index) in chatdata.history", :class="{'me': parseInt(hist.user) === 0, 'them': parseInt(hist.user) !== 0 }")
+          .bubble
+            //- .name {{ getUser(hist.user) }}
+            .message {{ hist.message }}
+          .time
+            | {{ time }}
+        //- li.line(v-if="iAmTyping", class="me")
+        //-   .bubble
+        //-     .message
+        //-       .dot-1
+        //-       .dot-2
+        //-       .dot-3
+        li.line(v-if="theyAreTyping", class="them")
+          .bubble
+            .message
+              .dot-1
+              .dot-2
+              .dot-3
+    .footer
+      .chat-input
+        input(:ref="'send-message'", v-model="sendMessageInput", @keyup.enter="sendMessage", placeholder="type something...")
+        button.wobbler(@click="$root.wobble")
+          control-icon.icon(:icon="'emoji'")
+        button.wobbler(@click="$root.wobble")
+          control-icon.icon(:icon="'attachment'")
+        button.wobbler(@click="sendMessage", :class="{'disabled': sendMessageInput === ''}")
+          control-icon.icon(:icon="'send'")
+#app
+  h1 Vue Chat Control
+  h6
+    b Note:
+    span  This chat is not backed by any backend. Chats are simulated.
+  p
+    .developer
+      | Developed By: 
+      a(href="https://codepen.io/phreaknation", target="_blank" title="") Joel Dies
+      | &nbsp;|&nbsp;
+      a(href="https://twitter.com/PhreakNation", target="_blank" title="") Twitter
+      | &nbsp;|&nbsp;
+      a(href="https://www.linkedin.com/in/joel-dies-30650025/", target="_blank" title="") LinkedIn
+    .designer Designed by:&nbsp;
+      a(href="https://codepen.io/rlignitz/", target="_blank" title="") Shea Lignitz
+      | &nbsp;|&nbsp;
+      a(href="https://twitter.com/shealignitz", target="_blank" title="") Twitter
+      | &nbsp;|&nbsp;
+      a(href="https://www.linkedin.com/in/rlignitz/", target="_blank" title="") LinkedIn
+  p
+    .option
+      h4 Pick iconset
+    .option
+      label
+        input#fontawesome(type="radio", name="iconset", v-model="iconset", value="fontawesome")
+        |  Font Awesome
+    .option
+      label
+        input#materialdesign(type="radio", name="iconset", v-model="iconset", value="materialdesign")
+        |  Material Design
+  .chat-box
+    .chat-windows(:ref="'chat-windows'")
+      chat-window(v-for="(chat, index) in chatsReversed", :key="index" :chatdata="chat", :index="index")
+    chat-panel(:ref="'chat-panel'", :title="'Vue.JS Chat'")

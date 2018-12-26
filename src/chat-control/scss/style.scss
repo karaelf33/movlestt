@@ -1,0 +1,609 @@
+$color-1: #41B883; // Accent Green
+$color-2: #000; // Text
+$color-3:#fff; // Background, Typing Dot 1
+$color-4: #4B627B; // Bubble Them
+$color-5: #748BA4; // Bubble You, Typing Dot 2
+$color-6: #D8D8D8; // Icons, Typing Dot 3,
+
+
+$chat-panel-height: 500px;
+$chat-panel-width: 350px;
+$chat-window-height: 400px;
+$chat-window-width: 350px;
+$chat-margin-left: 15px;
+
+$chat-header-size: 45px;
+$chat-footer-size: 33px;
+
+$chat-icon-width: 12px;
+$chat-icon-padding-x: 6px;
+
+$photo-size: 40px;
+$status-indicator-size: 12px;
+$notification-size: 24px;
+
+$dot-animation-delay: 0.5;
+
+#app {
+  font-family: 'Alegreya Sans', sans-serif;
+  margin: 100px auto;
+  text-align: center;
+  width: 400px;
+  
+  .option {
+    text-align: left;
+  }
+}
+
+#app, #app * {
+  box-sizing: border-box;
+  user-select: none;
+}
+
+h6 {
+  font-weight: 500
+}
+
+.wobble {
+  animation-name: animation-wobble;
+  animation-timing-function: linear;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+  transform-origin: 50% 50%;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: $color-6;
+  font-size: 12px;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: $color-6;
+  font-size: 12px;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: $color-6;
+  font-size: 12px;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: $color-6;
+  font-size: 12px;
+}
+
+input, button {
+  outline: none;
+}
+
+.cf {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.chat-box {
+  bottom: 0;
+  color: #202020;
+  font-size: 0;
+  min-height: 26px;
+  overflow: hidden;
+  pointer-events: none;
+  position: fixed;
+  right: 20px;
+  text-align: right;
+  white-space: nowrap;
+  
+  & > * {
+    pointer-events: all;
+    text-align: left;
+    vertical-align: bottom;
+  }
+  
+  .chat-windows {
+    display: inline-block;
+    font-size: 0;
+    margin-right: 10px;
+    
+    & > * {
+      font-size: 14px;
+      vertical-align: bottom;
+    }
+    
+    .chat-window {
+      background-color: $color-3;
+      color: #202020;
+      display: inline-block;
+      font-size: 0;
+      max-height: 45px;
+      margin-left: 10px;
+      min-height: 45px;
+      overflow: hidden;
+      transition: min-height 0.2s, max-height 0.2s;
+      width: $chat-window-width;
+      white-space: normal;
+      
+      &.expanded {
+        max-height: $chat-window-height;
+        min-height: $chat-window-height;
+
+        .body {
+          height: calc(#{$chat-window-height} - #{$chat-header-size + $chat-footer-size});
+        }
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+    
+      & > * {
+        font-size: 14px;
+      }
+
+      .header {
+        background-color: $color-1;
+        color: $color-2;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 500;
+        height: $chat-header-size;
+        line-height: 18px;
+        padding: 14px 12px;
+        position: relative;
+        text-align: center;
+        
+        .name {
+          display: inline-block;
+          max-width: 80%;
+        }
+        
+        .close {
+          display: inline-block;
+          position: absolute;
+          right: 15px;
+          width: 1rem;
+        }
+      }
+    
+      .body {
+        height: calc(100% - #{$chat-header-size + $chat-footer-size});
+        overflow-x: hidden;
+        overflow-y: auto;
+        transition: scrollTop 0.2s;
+        
+        ul.chat {
+          margin: 0;
+          padding: 0;
+          list-style-type: none;
+
+          li.line {
+            color: $color-2;
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            &.me {
+              float: right;
+              margin-right: 20px;
+              margin-left: 25%;
+
+              .bubble {
+                background-color: $color-5;
+                border-radius: 10px 0 10px 10px;
+
+                .name {
+                  // text-align: right;
+                }
+              }
+              .time {
+                float: right;
+              }
+            }
+
+            &.them {
+              margin-left: 20px;
+              margin-right: 25%;
+
+              .bubble {
+                background-color: $color-4;
+                border-radius: 0 10px 10px 10px;
+              }
+            }
+
+            .bubble {
+              // min-width: 120px;
+              overflow: hidden;
+              padding: 10px;
+              position: relative;
+
+              .name {
+                font-weight: 500;
+              }
+
+              .message {
+                min-height: 1rem;
+                min-width: 55px;
+                position: relative;
+                word-break: break-word;
+                
+                .dot-1, .dot-2, .dot-3 {
+                  border-radius: 50%;
+                  animation: cycleColors #{$dot-animation-delay*3}s infinite ease-in-out;
+                  height: 12px;
+                  bottom: 0;
+                  display: inline-block;
+                  position: absolute;
+                  width: 12px;
+                }
+                
+                .dot-1 {
+                  background-color: $color-3;
+                  left: 0
+                }
+                
+                .dot-2 {
+                  background-color: $color-5;
+                  left: 20px;
+                  animation-delay: #{$dot-animation-delay}s;
+                }
+                
+                .dot-3 {
+                  background-color: $color-6;
+                  left: 40px;
+                  animation-delay: #{$dot-animation-delay * 2}s;
+                }
+              }
+            }
+
+            .time {
+              color: $color-6;
+              margin: 0 12px;
+            }
+          }
+        }
+      }
+    
+      .footer {
+        box-sizing: content-box;
+        height: 32px;
+        
+        .chat-input {
+          background-color: $color-3;
+          border: none;
+          color: $color-2;
+          display: inline-block;
+          font-size: 0;
+          height: 2rem;
+          margin-bottom: 0.5rem;
+          text-align: center;
+
+          input {
+            background-color: $color-3;
+            border: none;
+            color: $color-2;
+            display: inline-block;
+            font-size: 14px;
+            height: 100%;
+            padding: 4px $chat-margin-left;
+            width: calc(#{$chat-window-width - ($chat-icon-width * 3) - ($chat-icon-padding-x * 6)});
+          }
+          
+          button.wobbler {
+            background-color: transparent;
+            border: 0;
+            color: $color-6;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 6px;
+            padding: 0;
+
+            &:last-child {
+              margin-right: 0;
+            }
+            
+            &.disabled {
+              cursor: default;
+              pointer-events: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .chat-panel {
+    background-color: $color-3;
+    color: $color-2;
+    display: inline-block;
+    font-size: 0;
+    max-height: 45px;
+    overflow: hidden;
+    transition: min-height 0.2s, max-height 0.2s;
+    vertical-align: bottom;
+    width: $chat-panel-width;
+    white-space: normal;
+
+    &.expanded {
+      max-height: $chat-panel-height;
+
+      .content {
+        min-height: calc(#{$chat-panel-height} - 5rem);
+      }
+    
+      .compose {
+        bottom: 10px;
+      }
+    }
+
+    & > * {
+      font-size: 14px;
+    }
+
+    .header {
+      background-color: $color-1;
+      color: $color-2;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 500;
+      height: $chat-header-size;
+      line-height: 18px;
+      padding: 14px 12px;
+      position: relative;
+      text-align: center;
+      
+      .menu {
+        background-color: transparent;
+        color: $color-2;
+        cursor: pointer;
+        border: none;
+        display: inline-block;
+        font-size: 24px;
+        left: 12px;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 9px;
+      }
+      
+      .title {
+        display: inline-block;
+      }
+    }
+
+    .search {
+      background-color: $color-3;
+      border: none;
+      color: $color-2;
+      height: 40px;
+      margin-bottom: 0.5rem;
+      position: relative;
+      text-align: center;
+
+      input {
+        background-color: $color-3;
+        color: $color-2;
+        border: none;
+        height: 100%;
+        padding: 4px $chat-margin-left;
+        width: 100%;
+      }
+      
+      .icon {
+        color: $color-6;
+        pointer-events: none;
+        position: absolute;
+        right: 12px;
+        top: 14px;
+      }
+    }
+
+    .content {
+      min-height: 0px;
+      max-height: 0px;
+      overflow: auto;
+      position: relative;
+      transition: min-height 0.2s, max-height 0.2s;
+
+      .ajax {
+        text-align: center;
+      }
+      
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+
+        li.chat-user {
+          cursor: pointer;
+          font-weight: 300;
+          height: $photo-size;
+          margin: 20px;
+          padding: 0;
+          position: relative;
+          text-align: left;
+
+          &.online {
+
+            .photo-container {
+
+              &:after {
+                background-color: $color-1;
+                box-shadow: 0px 0px 1px 1px rgba($color-1, 0.75);
+              }
+            }
+          }
+
+          .photo-container {
+            display: inline-block;
+            float: left;
+            position: relative;
+
+             &:after {
+              border-radius: 50%;
+              bottom: 1px;
+              content: '';
+              display: inline-block;
+              height: $status-indicator-size;
+              position: absolute;
+              right: -1px;
+              width: $status-indicator-size;
+            }
+
+            .photo {
+              border-radius: 50%;
+              height: $photo-size;
+              overflow: hidden;
+              width: $photo-size;
+
+              img {
+                display: inline-block;
+                height: $photo-size;
+                width: $photo-size;
+              }
+            }
+          }
+
+          .username, .last-message {
+            margin-left: 0.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+            width: calc(100% - #{$photo-size} - 0.5rem - #{$notification-size * 2});
+          }
+
+          .username {
+            display: inline-block;
+            font-size: 16px;
+            height: 16px;
+            line-height: 16px;
+            margin-bottom: 4px;
+            margin-top: 4px;
+            vertical-align: top;
+          }
+
+          .last-message {
+            display: inline-block;
+            font-size: 14px;
+            height: 14px;
+            line-height: 14px;
+            vertical-align: top;
+
+            .sender {
+              display: inline-block;
+              vertical-align: top;
+            }
+          }
+          
+          .notifications {
+            background-color: $color-1;
+            border-radius: 50%;
+            display: inline-block;
+            height: $notification-size;
+            opacity: 0;
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            width: $notification-size;
+            
+            &.show {
+              opacity: 1;
+            }
+            
+            .text {
+              line-height: $notification-size;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+
+    .compose {
+      background-color: $color-1;
+      border: 0;
+      border-radius: 50%;
+      bottom: -#{$chat-panel-height};
+      box-shadow: 0px 3px 3px 0 rgba(0,0,0,0.65);
+      color: $color-6;
+      cursor: pointer;
+      height: 45px;
+      position: absolute;
+      right: 10px;
+      text-align: center;
+      transition: bottom 0.2s;
+      width: 45px;
+      
+      .icon {
+        font-size: 18px;
+        line-height: 45px;
+      }
+    }
+  }
+}
+
+@keyframes upDown {
+  0% {
+    transform: translatey(0);
+  }
+  
+  30% {
+    transform: translatey(-10px);
+  }
+  
+  60%  {
+    transform: translatey(0);
+  }
+  
+  100%  {
+    transform: translatey(0);
+  }
+}
+
+@keyframes cycleColors {
+  0% {
+    background-color: $color-3;
+  }
+  // 32% {
+  //   background-color: $color-3;
+  // }
+  
+  33% {
+    background-color: $color-5;
+  }
+  // 65% {
+  //   background-color: $color-5;
+  // }
+  
+  66%  {
+    background-color: $color-6;
+  }
+  // 99%  {
+  //   background-color: $color-6;
+  // }
+  
+  100%  {
+    background-color: $color-3;
+  }
+}
+
+@keyframes animation-wobble {
+  0% {
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+  15% {
+    transform:  translate(-25px,0px)  rotate(-5deg) ;
+  }
+  30% {
+    transform:  translate(20px,0px)  rotate(3deg) ;
+  }
+  45% {
+    transform:  translate(-15px,0px)  rotate(-3deg) ;
+  }
+  60% {
+    transform:  translate(10px,0px)  rotate(2deg) ;
+  }
+  75% {
+    transform:  translate(-5px,0px)  rotate(-1deg) ;
+  }
+  100% {
+    transform:  translate(0px,0px)  rotate(0deg) ;
+  }
+}

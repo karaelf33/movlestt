@@ -5,10 +5,16 @@
     <meta charset="UTF-8">
     <title>Movlest</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Alegreya+Sans:300,400,500,700'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.3.0/css/perfect-scrollbar.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/2.3.54/css/materialdesignicons.min.css'>
     <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/148866/reset.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" href="assets/scss/index.css">
+    <link rel="stylesheet" href="chat-control/scss/style.css">
 </head>
 
 <body>
@@ -134,12 +140,121 @@
     </div>
 </section>
 
+<script type="text/x-template" id="control-ajax">
+    <div class="ajax" v-if="isShown === true">
+        <control-icon :icon="'ajax'" :classes="'fa-spin fa-3x fa-fw'"></control-icon>
+    </div>
+</script>
+<script type="text/x-template" id="control-icon"><i :class="iconclass"></i></script>
+<script type="text/x-template" id="control-chat-panel">
+    <div class="chat-panel" :class="{'expanded': isExpanded}">
+        <div class="header" @click="expand">
+            <button class="menu wobbler" @click="$root.wobble">
+                <control-icon :icon="'menu'"></control-icon>
+            </button><span class="title">{{ title }}</span>
+        </div>
+        <div class="search">
+            <input type="text" placeholder="Search..." v-model="searchInput"/>
+            <control-icon class="icon" :icon="'search'"></control-icon>
+        </div>
+        <div class="content" :ref="'content'">
+            <control-ajax v-if="isLoaded === false" :ref="'ajax'"></control-ajax>
+            <ul class="user-list">
+                <chat-user v-for="(user, index) in filteredUsers" :key="index" :userdata="user" :index="index"></chat-user>
+            </ul>
+        </div>
+        <button class="compose wobbler" @click="$root.wobble">
+            <control-icon class="icon" :icon="'compose'"></control-icon>
+        </button>
+    </div>
+</script>
+<script type="text/x-template" id="control-chat-user">
+    <li class="chat-user" @click="chatUser(index)" :class="{'offline': userdata.status === 0, 'online': userdata.status === 1, 'away': userdata.status === 2, }">
+        <div class="photo-container">
+            <div class="photo"><img :src="userdata.photo"/></div>
+        </div>
+        <div class="username">{{ userdata.username}}</div>
+        <div class="last-message">
+            <div class="sender">You:&nbsp;</div>lorem ipsum dolor sit amet
+        </div>
+        <div class="notifications" :class="{'show': Math.ceil(Math.random() * 10) % 2 }">
+            <div class="text">{{ Math.ceil(Math.random() * 10) }}</div>
+        </div>
+    </li>
+</script>
+<script type="text/x-template" id="control-chat-window">
+    <div class="chat-window" :class="{'expanded': isExpanded}" :ref="'index-' + index">
+        <div class="header" @click="expand">
+            <div class="name">{{ usersInChat }}</div>
+            <div class="close" @click="closeChat">
+                <control-icon class="icon" :icon="'close'"></control-icon>
+            </div>
+        </div>
+        <div class="body" :ref="'chat'">
+            <ul class="chat">
+                <li class="line" v-if="chatdata" v-for="(hist, index) in chatdata.history" :class="{'me': parseInt(hist.user) === 0, 'them': parseInt(hist.user) !== 0 }">
+                    <div class="bubble">
+                        <div class="message">{{ hist.message }}</div>
+                    </div>
+                    <div class="time">{{ time }}</div>
+                </li>
+                <li class="line them" v-if="theyAreTyping">
+                    <div class="bubble">
+                        <div class="message">
+                            <div class="dot-1"></div>
+                            <div class="dot-2"></div>
+                            <div class="dot-3"></div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="footer">
+            <div class="chat-input">
+                <input :ref="'send-message'" v-model="sendMessageInput" @keyup.enter="sendMessage" placeholder="type something..."/>
+                <button class="wobbler" @click="$root.wobble">
+                    <control-icon class="icon" :icon="'emoji'"></control-icon>
+                </button>
+                <button class="wobbler" @click="$root.wobble">
+                    <control-icon class="icon" :icon="'attachment'"></control-icon>
+                </button>
+                <button class="wobbler" @click="sendMessage" :class="{'disabled': sendMessageInput === ''}">
+                    <control-icon class="icon" :icon="'send'"></control-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</script>
+<div id="app">
+    <p>
+    <div class="option">
+        <label>
+            <input id="fontawesome" type="radio" name="iconset" v-model="iconset" value="fontawesome"/> Font Awesome
+        </label>
+    </div>
+    <div class="option">
+        <label>
+            <input id="materialdesign" type="radio" name="iconset" v-model="iconset" value="materialdesign"/> Material Design
+        </label>
+    </div>
+    </p>
+    <div class="chat-box">
+        <div class="chat-windows" :ref="'chat-windows'">
+            <chat-window v-for="(chat, index) in chatsReversed" :key="index" :chatdata="chat" :index="index"></chat-window>
+        </div>
+        <chat-panel :ref="'chat-panel'" :title="'Vue.JS Chat'"></chat-panel>
+    </div>
+</div>
 
-</body>
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17-beta.0/vue.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/tweenjs/1.0.2/tweenjs.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.3.0/perfect-scrollbar.js'></script>
 
 <script src="assets/javascript/index.js"></script>
+<script src="chat-control/js/index.js"></script>
+
 
 
 
