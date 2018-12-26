@@ -1,0 +1,18 @@
+{
+  "name": "movlest",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Yusuf <yusuf.bestas@orgino.com.tr>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/karaelf33/basic_snake_games",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/assets/lib",
+    "test",
+    "tests"
+  ]
+}
