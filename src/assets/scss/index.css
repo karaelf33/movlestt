@@ -510,8 +510,7 @@ input[type="button"] {
       height: auto;
       cursor: pointer; }
       .banner-choose #playBtn img:hover {
-        width: 85px;
-        height: auto;
+        transform: scale(1.2);
         transition: 0.5s; }
   .banner-choose .fancy {
     display: flex;
@@ -537,6 +536,8 @@ input[type="button"] {
     border-left: 1px solid #999;
     margin-left: 3px;
     margin-right: 3px; }
+    .banner-choose .fancy .slot li:hover {
+      cursor: pointer; }
   .banner-choose .fancy .slot:first-child li {
     border-left: none; }
   .banner-choose .fancy .slot li:nth-child(7) {

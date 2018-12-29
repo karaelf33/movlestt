@@ -543,8 +543,7 @@ input[type="button"] {
       height: auto;
       cursor: pointer;
     &:hover{
-        width:85px;
-        height: auto;
+      transform: scale(1.2);
       transition:0.5s;
 
       }
@@ -577,6 +576,10 @@ input[type="button"] {
     border-left: 1px solid #999;
     margin-left: 3px;
     margin-right: 3px;
+
+    &:hover{
+      cursor: pointer;
+    }
   }
 
   .fancy .slot:first-child li {

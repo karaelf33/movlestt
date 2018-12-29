@@ -457,7 +457,8 @@ nav {
       align-items: center; }
       .module .section .head h3 {
         font-weight: 400;
-        margin: 0; }
+        margin: 0;
+        text-decoration: underline; }
       .module .section .head a {
         text-decoration: none;
         color: #6B8E23;
